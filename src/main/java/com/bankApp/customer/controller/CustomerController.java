@@ -1,4 +1,4 @@
 package com.bankApp.customer.controller;
 
-public class customerController {
+public class CustomerController {
 }
