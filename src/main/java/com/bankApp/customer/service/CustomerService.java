@@ -1,4 +1,4 @@
 package com.bankApp.customer.service;
 
-public class customerService {
+public class CustomerService {
 }
