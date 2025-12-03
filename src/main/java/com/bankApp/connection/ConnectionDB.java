@@ -5,9 +5,6 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import org.bson.Document;
-import org.bson.types.ObjectId;
-import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Updates.*;
 
 public class ConnectionDB {
 
@@ -44,7 +41,7 @@ public class ConnectionDB {
     }
 
     //Cerramos la conexion a nuestra base de datos
-    public void ConnectionClose(){
+    public void connectionClose(){
         if(mongoClient != null){
             mongoClient.close();
             System.out.println("Conexion cerarda exitosamente");
