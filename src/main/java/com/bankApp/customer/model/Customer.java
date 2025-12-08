@@ -1,7 +1,5 @@
 package com.bankApp.customer.model;
 
-import java.math.BigDecimal;
-
 public class Customer {
     private int id;
     private int edad;
@@ -9,18 +7,18 @@ public class Customer {
     private String direccion;
     private String email;
     private String password;
-    private BigDecimal saldo;
-    private BigDecimal credito;
+    private Double saldo;
+    private Double credito;
 
-    public Customer(int id, int edad, String nombreCompleto, String direccion, String email, String password) {
+    public Customer(int id, int edad, String nombreCompleto, String direccion, String email, String password, Double saldo, Double credito) {
         this.id = id;
         this.edad = edad;
         this.nombreCompleto = nombreCompleto;
         this.direccion = direccion;
         this.email = email;
         this.password = password;
-        this.saldo = new BigDecimal(0);
-        this.credito = new BigDecimal(0);
+        this.saldo = saldo;
+        this.credito = credito;
 
     }
 
@@ -37,9 +35,9 @@ public class Customer {
 
     public String getPassword() {return password;}
 
-    public BigDecimal getSaldo() {return saldo;}
+    public Double getSaldo() {return saldo;}
 
-    public BigDecimal getCredito() {return credito;}
+    public Double getCredito() {return credito;}
 
     //Setters
     public void setId(int id) {this.id = id;}
@@ -54,8 +52,8 @@ public class Customer {
 
     public void setPassword(String password) {this.password = password;}
 
-    public void setSaldo(BigDecimal saldo) {this.saldo = saldo;}
+    public void setSaldo(Double saldo) {this.saldo = saldo;}
 
-    public void setCredito(BigDecimal credito) {this.credito = credito;}
+    public void setCredito(Double credito) {this.credito = credito;}
 
 }

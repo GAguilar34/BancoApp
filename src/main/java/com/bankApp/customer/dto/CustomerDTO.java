@@ -12,18 +12,18 @@ public class CustomerDTO {
     private String direccion;
     private String email;
     private String password;
-    private BigDecimal saldo;
-    private BigDecimal credito;
+    private Double saldo;
+    private Double credito;
 
-    public CustomerDTO(int id, int edad, String nombreCompleto, String direccion, String email, String password){
+    public CustomerDTO(int id, int edad, String nombreCompleto, String direccion, String email, String password,  Double saldo, Double credito) {
         this.id = id;
         this.edad = edad;
         this.nombreCompleto = nombreCompleto;
         this.direccion = direccion;
         this.email = email;
         this.password = password;
-        this.saldo = new BigDecimal(0);
-        this.credito = new BigDecimal(0);
+        this.saldo = saldo;
+        this.credito = credito;
     }
     //Convierte customer en un dto para que el frontend pueda acceder a la informacion necesaria
     public static CustomerDTO fromCustomer(Customer customer){
@@ -33,7 +33,9 @@ public class CustomerDTO {
                customer.getNombreCompleto(),
                customer.getDireccion(),
                customer.getEmail(),
-               customer.getPassword()
+               customer.getPassword(),
+               customer.getSaldo(),
+               customer.getCredito()
        );
     }
 
@@ -50,7 +52,7 @@ public class CustomerDTO {
 
     public String getPassword() {return password;}
 
-    public BigDecimal getSaldo() {return saldo;}
+    public Double getSaldo() {return saldo;}
 
-    public BigDecimal getCredito() {return credito;}
+    public Double getCredito() {return credito;}
 }

@@ -18,12 +18,14 @@ import com.bankApp.customer.model.Customer;
 
 import java.util.Optional;
 
-public class CustomerRepositorylmpl {
+public class CustomerRepositorylmpl implements CustomerRepository{
 
+    private Customer customer;
     private ConnectionDB connectionDB;
     private MongoCollection<Document> collection;
 
     public CustomerRepositorylmpl(){
+        this.connectionDB = new ConnectionDB();
         collection = connectionDB.getCollection("Customer"); //Obtenemos la coleccion
     }
 
@@ -40,7 +42,9 @@ public class CustomerRepositorylmpl {
                     document.getString("nombre"),
                     document.getString("direccion"),
                     document.getString("email"),
-                    document.getString("contraseña")
+                    document.getString("contraseña"),
+                    document.getDouble("saldo"),
+                    document.getDouble("credito")
                 );
 
                 return Optional.of(customer);
@@ -59,7 +63,6 @@ public class CustomerRepositorylmpl {
     public List<Customer> findAllOrderedById(){
             List <Customer> customers = new ArrayList<>();
         try {
-            Customer customer = null;
             //Obtenemos los datos guardados en nuestro documento filtrados por id de menor a mayor
             for (Document document : collection.find().sort(ascending("id"))) {
                 customer = new Customer(
@@ -68,10 +71,12 @@ public class CustomerRepositorylmpl {
                         document.getString("nombre"),
                         document.getString("direccion"),
                         document.getString("email"),
-                        document.getString("contraseña")
+                        document.getString("contraseña"),
+                        document.getDouble("saldo"),
+                        document.getDouble("credito")
                 );
+                customers.add(customer);
             }
-             customers.add(customer);
 
         }catch(MongoQueryException e){
             System.out.println("Error al ordenar la lista de clientes: " + e.getMessage());
@@ -89,7 +94,9 @@ public class CustomerRepositorylmpl {
                     .append("nombre", customer.getNombreCompleto())
                     .append("direccion", customer.getDireccion())
                     .append("email", customer.getEmail())
-                    .append("contraseña", customer.getPassword());
+                    .append("contraseña", customer.getPassword())
+                    .append("saldo", customer.getSaldo())
+                    .append("credito", customer.getCredito());
 
             collection.insertOne(document);
             return customer;
@@ -100,45 +107,30 @@ public class CustomerRepositorylmpl {
         }
     }
 
-    //Metodo para eliminar un cliente
-    public boolean deleteById(int id){
-        try{
-            DeleteResult result = collection.deleteOne(eq("id", id));
-            return true;
-
-        }catch(MongoException e){
-            System.out.println("Error al eliminar el cliente: " + e.getMessage());
-            return false;
-        }
-    }
-
     //Metodo para buscar un cliente por su nombre
-    public Optional <Customer> findByName(String nombreCompleto){
-        try{
-            //Obtenemos los datos de un cliente mediante su nombre
-            Document document = collection.find(eq("nombre", nombreCompleto)).first();
-            //Mostramos los datos del cliente
-            if(document != null){
-               Customer customer = new Customer(
-                    document.getInteger("id"),
-                    document.getInteger("edad"),
-                    document.getString("nombre"),
-                    document.getString("direccion"),
-                    document.getString("email"),
-                    document.getString("contraseña")
-               );
-
-               return Optional.of(customer);
-
-            }else{
-               return Optional.empty();
+    public List<Customer> findByName(String nombreCompleto) {
+        List<Customer> customers = new ArrayList<>();
+        try {
+            // Usamos find() sin .first() para obtener todos los resultados
+            for (Document document : collection.find(eq("nombre", nombreCompleto))) {
+                Customer customer = new Customer(
+                        document.getInteger("id"),
+                        document.getInteger("edad"),
+                        document.getString("nombre"),
+                        document.getString("direccion"),
+                        document.getString("email"),
+                        document.getString("contraseña"),
+                        document.getDouble("saldo"),
+                        document.getDouble("credito")
+                );
+                customers.add(customer);
             }
-
-        }catch(MongoQueryException e){
-            System.out.println("Error al buscar el cliente: " + e.getMessage());
-            return Optional.empty();
+        } catch(MongoQueryException e) {
+            System.out.println("Error al buscar clientes por nombre: " + e.getMessage());
         }
+        return customers;
     }
+
 
     //Metodo para buscar un cliente por su email
     public Optional <Customer> findByEmail(String email){
@@ -154,7 +146,9 @@ public class CustomerRepositorylmpl {
                 document.getString("nombre"),
                 document.getString("direccion"),
                 document.getString("email"),
-                document.getString("contraseña")
+                document.getString("contraseña"),
+                document.getDouble("saldo"),
+                document.getDouble("credito")
                 );
 
                 return Optional.of(customer);
@@ -175,7 +169,9 @@ public class CustomerRepositorylmpl {
                     .append("nombre", customer.getNombreCompleto())
                     .append("direccion", customer.getDireccion())
                     .append("email", customer.getEmail())
-                    .append("contraseña", customer.getPassword()));
+                    .append("contraseña", customer.getPassword())
+                    .append("saldo", customer.getSaldo())
+                    .append("credito", customer.getCredito()));
 
             collection.updateOne(eq("id", id), document);
 
@@ -184,6 +180,17 @@ public class CustomerRepositorylmpl {
         }catch(MongoBulkWriteException e){
             System.out.println("Error al actualizar los datos del cliente: " + e.getMessage());
             return null;
+        }
+    }
+
+    //Metodo para eliminar un cliente
+    public  boolean delteById(int id){
+        try {
+            DeleteResult result = collection.deleteOne(eq("id", id));
+            return result.getDeletedCount() > 0; //Devuelve true solo si elimino un cliente
+        }catch(MongoException e){
+            System.out.println("Error al eliminar el cliente: " + e.getMessage());
+            return false;
         }
     }
 }
