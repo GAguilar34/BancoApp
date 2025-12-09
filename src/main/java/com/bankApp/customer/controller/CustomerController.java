@@ -14,8 +14,13 @@ public class CustomerController {
         this.customerService = new CustomerService();
     }
 
+    public Optional<Customer> findCustomerById(int id) {
+        return customerService.findById(id);
+    }
+
     //Metodo para registrar un cliente
-    public CustomerDTO register(int id, int edad, String nombreCompleto, String direccion, String email, String password, Double saldo ,Double credito) {
+    public CustomerDTO register(int id, int edad, String nombreCompleto,
+                                String direccion, String email, String password) {
         return customerService.save(id, edad, nombreCompleto, direccion, email, password, 0.0, 0.0);
     }
 
@@ -26,7 +31,7 @@ public class CustomerController {
 
     //Metodo para eliminar un cliente
     public boolean deleteById(int id){
-        return customerService.delteById(id);
+        return customerService.deleteById(id);
     }
 
     //Metodo para ordenar todos los clientes por su id
@@ -43,4 +48,7 @@ public class CustomerController {
     public Optional<Customer> findByEmail(String email){
         return customerService.findByEmail(email);
     }
+
+    //Metodo para eliminar un cliente por su id
+    public boolean deleteCustomer(int id) {return customerService.deleteById(id);}
 }

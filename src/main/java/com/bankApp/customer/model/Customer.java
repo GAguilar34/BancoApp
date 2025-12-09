@@ -22,6 +22,35 @@ public class Customer {
 
     }
 
+    // Metodo para validar fortaleza de password
+    public static boolean isPasswordStrong(String password) {
+        if (password == null || password.length() < 8) {
+            return false;
+        }
+
+        // Verifica que tenga al menos una letra mayuscula, una minuscula y un numero
+        boolean hasUpper = false;
+        boolean hasLower = false;
+        boolean hasDigit = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) hasUpper = true;
+            if (Character.isLowerCase(c)) hasLower = true;
+            if (Character.isDigit(c)) hasDigit = true;
+        }
+
+        return hasUpper && hasLower && hasDigit;
+    }
+
+    // Metodo para obtener requisitos de password
+    public static String getPasswordRequirements() {
+        return "El password debe tener:\n" +
+                "- Al menos 8 caracteres\n" +
+                "- Al menos una letra mayuscula\n" +
+                "- Al menos una letra minuscula\n" +
+                "- Al menos un numero";
+    }
+
     //Getters
     public int getId() {return id;}
 

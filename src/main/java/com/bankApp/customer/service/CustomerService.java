@@ -4,6 +4,7 @@ import com.bankApp.customer.model.Customer;
 import com.bankApp.customer.dto.CustomerDTO;
 import com.bankApp.customer.repository.CustomerRepositorylmpl;
 import com.bankApp.customer.repository.CustomerRepository;
+import com.bankApp.login.service.LoginService;
 
 import javax.swing.*;
 import java.util.List;
@@ -52,23 +53,27 @@ public class CustomerService {
     }
 
     //Metodo para agregar un cliente
-    public CustomerDTO save(int id, int edad, String nombreCompleto, String direccion, String email, String password, double v, double v1){
+    public CustomerDTO save(int id, int edad, String nombreCompleto, String direccion,
+                            String email, String password, double saldo, double credito){
         //Validamos el email
         if(!isValidEmail(email)){
             JOptionPane.showMessageDialog(null, "Email invalido");
             throw new IllegalArgumentException("El email es invalido");
         }
 
-        //Agregamos el cliente
+        // ENCRIPTAR PASSWORD antes de guardar
+        String encryptedPassword = LoginService.encryptPassword(password);
+
+        //Agregamos el cliente con password encriptado
         Customer customer = new Customer(
                 id,
                 edad,
                 nombreCompleto,
                 direccion,
                 email,
-                password,
-                0.0,
-                0.0
+                encryptedPassword, // Password encriptado
+                saldo,
+                credito
         );
 
         //Agrega el customer al repository y lo guarda en la base de datos
@@ -94,11 +99,6 @@ public class CustomerService {
     //Metodo para buscar un cliente por su email
     public Optional<Customer> findByEmail(String email){
         return customerRepository.findByEmail(email);
-    }
-
-    //Metodo para eliminar un cliente por su id
-    public boolean delteById(int id){
-        return customerRepository.delteById(id);
     }
 
     //Metodo para actualizar un cliente
@@ -176,5 +176,20 @@ public class CustomerService {
         update(idCliente, cliente);
     }
 
-
+    //Metodo para eliminar un cliente
+    public boolean deleteById(int id) {
+        try {
+            System.out.println("Intentando eliminar cliente ID: " + id);
+            boolean eliminado = customerRepository.deleteById(id);
+            if (eliminado) {
+                System.out.println("Cliente ID " + id + " eliminado exitosamente");
+            } else {
+                System.out.println("No se encontró cliente con ID " + id);
+            }
+            return eliminado;
+        } catch (Exception e) {
+            System.out.println("Error al eliminar cliente: " + e.getMessage());
+            return false;
+        }
+    }
 }

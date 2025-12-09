@@ -184,7 +184,7 @@ public class CustomerRepositorylmpl implements CustomerRepository{
     }
 
     //Metodo para eliminar un cliente
-    public  boolean delteById(int id){
+    public  boolean deleteById(int id){
         try {
             DeleteResult result = collection.deleteOne(eq("id", id));
             return result.getDeletedCount() > 0; //Devuelve true solo si elimino un cliente
