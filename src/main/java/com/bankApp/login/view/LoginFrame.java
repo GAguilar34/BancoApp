@@ -15,11 +15,12 @@ public class LoginFrame extends JFrame{
 
     JPanel panel;
     JLabel label, label2, label3, label4, label5, labelImage;
-    JTextField text, text2;
+    JTextField text;
+    JPasswordField passwordField;
     JButton boton, boton2;
     LoginService loginService;
     CustomerController customerController;
-    LoginController loginController; // Agregar esta variable
+    LoginController loginController;
 
     public LoginFrame(){
         this.setTitle("Login");
@@ -93,8 +94,8 @@ public class LoginFrame extends JFrame{
         userTextPanel.setBackground(Color.WHITE);
         userTextPanel.setMaximumSize(new Dimension(600, 40));
 
-        text = new JTextField("Ingrese su usario");
-        text.setForeground(Color.BLACK);
+        text = new JTextField("Ingrese su usuario");
+        text.setForeground(Color.GRAY);
         text.setFont(new Font("Arial", Font.BOLD, 14));
         text.setPreferredSize(new Dimension(350,30));
         text.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
@@ -106,7 +107,7 @@ public class LoginFrame extends JFrame{
 
         text.addFocusListener(new FocusListener(){
             public void focusGained(FocusEvent e){
-                if(text.getText().equals("Ingrese su usario")) {
+                if(text.getText().equals("Ingrese su usuario")) {
                     text.setText("");
                     text.setForeground(Color.BLACK);
                 }
@@ -114,7 +115,7 @@ public class LoginFrame extends JFrame{
 
             public void focusLost(FocusEvent e){
                 if(text.getText().isEmpty()){
-                    text.setText("Ingrese su usario");
+                    text.setText("Ingrese su usuario");
                     text.setForeground(Color.GRAY);
                 }
             }
@@ -137,34 +138,39 @@ public class LoginFrame extends JFrame{
 
         panel.add(Box.createVerticalStrut(5));
 
-        // Panel para el TextField de Contraseña
+        // Panel para el PasswordField de Contraseña
         JPanel passwordTextPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         passwordTextPanel.setBackground(Color.WHITE);
         passwordTextPanel.setMaximumSize(new Dimension(600, 40));
 
-        text2 = new JTextField("Ingrese su Contraseña");
-        text2.setForeground(Color.BLACK);
-        text2.setFont(new Font("Arial", Font.BOLD, 14));
-        text2.setPreferredSize(new Dimension(350,30));
-        text2.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
+        // Cambiar a JPasswordField
+        passwordField = new JPasswordField("Ingrese su Contraseña");
+        passwordField.setForeground(Color.GRAY);
+        passwordField.setFont(new Font("Arial", Font.BOLD, 14));
+        passwordField.setPreferredSize(new Dimension(350,30));
+        passwordField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
+        passwordField.setEchoChar((char)0); // Mostrar texto plano para el placeholder
 
         passwordTextPanel.add(Box.createHorizontalStrut(100));
-        passwordTextPanel.add(text2);
+        passwordTextPanel.add(passwordField);
         panel.add(passwordTextPanel);
 
-        text2.addFocusListener(new FocusListener(){
+        passwordField.addFocusListener(new FocusListener(){
             public void focusGained(FocusEvent e){
-                if(text2.getText().equals("Ingrese su Contraseña")){
-                    text2.setText("");
-                    text2.setForeground(Color.BLACK);
-
+                String passwordText = new String(passwordField.getPassword());
+                if(passwordText.equals("Ingrese su Contraseña")){
+                    passwordField.setText("");
+                    passwordField.setForeground(Color.BLACK);
+                    passwordField.setEchoChar('•'); // Mostrar puntos cuando se empiece a escribir
                 }
             }
 
             public void focusLost(FocusEvent e){
-                if(text2.getText().isEmpty()){
-                    text2.setText("Ingrese su Contraseña");
-                    text2.setForeground(Color.GRAY);
+                char[] password = passwordField.getPassword();
+                if(password.length == 0){
+                    passwordField.setForeground(Color.GRAY);
+                    passwordField.setEchoChar((char)0); // Mostrar texto plano para el placeholder
+                    passwordField.setText("Ingrese su Contraseña");
                 }
             }
         });
@@ -214,18 +220,23 @@ public class LoginFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e){
                 String email = text.getText();
-                String password = text2.getText();
+                char[] passwordChars = passwordField.getPassword();
+                String password = new String(passwordChars);
 
                 // Validar que los campos no estén vacíos NI contengan el placeholder
-                if(email.isEmpty() || email.equals("Ingrese su usario") ||
+                if(email.isEmpty() || email.equals("Ingrese su usuario") ||
                         password.isEmpty() || password.equals("Ingrese su Contraseña")){
                     JOptionPane.showMessageDialog(null, "Por favor llene todos los campos",
                             "Error", JOptionPane.ERROR_MESSAGE);
+                    // Limpiar el array de contraseña por seguridad
+                    java.util.Arrays.fill(passwordChars, '0');
                     return;
                 }
 
-                // USAR LA INSTANCIA YA INICIALIZADA
                 var result = loginController.login(email, password);
+
+                // Limpiar el array de contraseña por seguridad
+                java.util.Arrays.fill(passwordChars, '0');
 
                 if(result.isPresent()) {
                     JOptionPane.showMessageDialog(null, "Login exitoso. Cargando Dashboard...",
